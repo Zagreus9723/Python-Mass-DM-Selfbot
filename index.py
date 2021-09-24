@@ -7,32 +7,32 @@ import json
 
 client = commands.Bot(command_prefix = '++')
 client.remove_command('help')
-configj = open('config.json', 'rw')
+configj = open('config.json', 'r')
 config = json.load(configj)
 token = config['token']
 messagesend = config['message']
 users = []
 
 @client.event
-async def on_voice_state_update():
-    if message.author in users:
+async def on_voice_state_update(member):
+    if member in users:
         print('Already DMed')
     else:
         try:
-            await message.author.send(messagesend)
-            users.append(message.author)
+            await member.send(messagesend)
+            users.append(member)
             print('Said message')
         except:
             print("Couldn't DM this user")
 
 @client.event
-async def on_member_update():
-    if message.author in users:
+async def on_member_update(before, after):
+    if after.name in users:
         print('Already DMed')
     else:
         try:
-            await message.author.send(messagesend)
-            users.append(message.author)
+            await after.name.send(messagesend)
+            users.append(after.name)
             print('Said message')
         except:
             print("Couldn't DM this user")
