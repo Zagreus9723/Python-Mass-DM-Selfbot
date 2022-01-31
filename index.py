@@ -1,11 +1,8 @@
-import discord
-import datetime
+import discord, datetime, asyncio, time, json
 from discord.ext import commands
-import asyncio
-import time
-import json
+from rich import console, print
 
-client = commands.Bot(command_prefix = '++')
+client = commands.Bot(command_prefix = '++', self_bot=True)
 client.remove_command('help')
 configj = open('config.json', 'r')
 config = json.load(configj)
@@ -15,50 +12,51 @@ users = []
 
 @client.event
 async def on_voice_state_update(member):
-    if member in users:
-        print('Already DMed')
+    if member.id in users:
+        console.log(f'Already DMed {member.name}#{member.discriminator}.')
     else:
         try:
             await member.send(messagesend)
-            users.append(member)
-            print('Said message')
+            users.append(member.id)
+            console.log(f'[green]DMed {member.name}#{member.discriminator}.[/green]')
         except:
-            print("Couldn't DM this user")
+            console.log(f'[red]Couldn\'t DM {member.name}#{member.discriminator}.]/red]')
 
 @client.event
 async def on_member_update(before, after):
-    if after.name in users:
-        print('Already DMed')
+    if after.id in users:
+        console.log(f'Already DMed {after.name}#{after.discriminator}.')
     else:
         try:
             await after.name.send(messagesend)
-            users.append(after.name)
-            print('Said message')
+            users.append(after.id)
+            console.log(f'[green]DMed {after.name}#{after.discriminator}.[/green]')
         except:
-            print("Couldn't DM this user")
+            console.log(f'[red]Couldn\'t DM {after.name}#{after.discriminator}.[/red]')
 
 @client.event
 async def on_message(message):
-    if message.author in users:
-        print('Already DMed')
+    if message.author.id in users:
+        console.log(f'Already DMed {message.author.name}#{message.author.discriminator}.')
     else:
         try:
             await message.author.send(messagesend)
-            users.append(message.author)
-            print('Said message')
+            users.append(message.author.id)
+            console.log(f'[green]DMed {message.author.name}#{message.author.discriminator}.[/green]')
         except:
-            print("Couldn't DM this user")
+            console.log(f'[red]Couldn\'t DM {message.author.name}#{message.author.discriminator}.[/red]')
 
 @client.event
-async def on_reaction_add(reaction, user):
-    if reaction.message.author in users:
-        print('Already DMed')
+async def on_raw_reaction_add(payload):
+    member = payload.member
+    if member.id in users:
+        console.log(f'Already DMed {member.name}#{member.discriminator}.')
     else:
         try:
-            await reaction.message.author.send(messagesend)
-            users.append(reaction.message.author)
-            print('Said message')
+            await member.send(messagesend)
+            users.append(member.id)
+            console.log(f'[green]DMed {member.name}#{member.discriminator}.[/green]')
         except:
-            print("Couldn't DM this user")
+            console.log(f'[red]Couldn\'t DM {member.name}#{member.discriminator}.[/red]')
 
 client.run(token, bot=False)
