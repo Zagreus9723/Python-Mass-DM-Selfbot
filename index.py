@@ -21,13 +21,13 @@ for x in memberz:
     try:
         rand = random.randint(0,20)
         if rand == 20:
-            console.log(f'[red]Sleeping for 45 seconds to prevent rate-limiting.[/red]')
+            print(f'Sleeping for 45 seconds to prevent rate-limiting.')
             time.sleep(45)
-            console.log(f'[green]Done sleeping![/green]')
+            print(f'Done sleeping!')
         time.sleep(int(timez))
         newDM = bot.createDM([f"{x}"]).json()["id"]
         bot.sendMessage(newDM, f"{messag}")
-        console.log(f'[green]DMed {x}.[/green]')
+        print(f'DMed {x}.')
     except Exception as E:
         print(E)
-        console.log(f'[red]Couldn\'t DM {x}.[/red]')
+        print(f'Couldn\'t DM {x}.')
