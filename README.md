@@ -9,6 +9,6 @@ How to run:
 - Git Clone (Download as zip and extract, or run `git clone https://github.com/Apophis52/Python-Mass-DM-Selfbot.git .`)
 - Run the python file (double click or `python3.9 index.py`)
 - Fill out the questions. (Just type in the content.)
-Recommended delay of 25
+- Recommended delay of 25
 
 # STUPID ISSUESS WILL BE CLOSED.
