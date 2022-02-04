@@ -9,14 +9,16 @@ timez = input("How long between DMs: ")
 @bot.gateway.command
 def memberTest(resp):
     if resp.event.ready_supplemental:
-        bot.gateway.fetchMembers(guildz, channel) 
+        bot.gateway.fetchMembers(guildz, channel)
     if bot.gateway.finishedMemberFetching(guildz):
         bot.gateway.removeCommand(memberTest)
         bot.gateway.close()
 bot.gateway.run()
+print("Starting add members.")
 for memberID in bot.gateway.session.guild(guildz).members:
     print(memberID)
     memberz.append(memberID)
+print("Starting to DM.")
 for x in memberz:
     try:
         rand = random.randint(0,20)
@@ -24,6 +26,7 @@ for x in memberz:
             print(f'Sleeping for 45 seconds to prevent rate-limiting.')
             time.sleep(45)
             print(f'Done sleeping!')
+        print(f"Preparing to DM {x}.")
         time.sleep(int(timez))
         newDM = bot.createDM([f"{x}"]).json()["id"]
         bot.sendMessage(newDM, f"{messag}")
