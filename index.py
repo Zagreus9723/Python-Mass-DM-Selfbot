@@ -1,62 +1,33 @@
-import discord, datetime, asyncio, time, json
-from discord.ext import commands
+import discum, random, time
 from rich import console, print
-
-client = commands.Bot(command_prefix = '++', self_bot=True)
-client.remove_command('help')
-configj = open('config.json', 'r')
-config = json.load(configj)
-token = config['token']
-messagesend = config['message']
-users = []
-
-@client.event
-async def on_voice_state_update(member):
-    if member.id in users:
-        console.log(f'Already DMed {member.name}#{member.discriminator}.')
-    else:
-        try:
-            await member.send(messagesend)
-            users.append(member.id)
-            console.log(f'[green]DMed {member.name}#{member.discriminator}.[/green]')
-        except:
-            console.log(f'[red]Couldn\'t DM {member.name}#{member.discriminator}.]/red]')
-
-@client.event
-async def on_member_update(before, after):
-    if after.id in users:
-        console.log(f'Already DMed {after.name}#{after.discriminator}.')
-    else:
-        try:
-            await after.name.send(messagesend)
-            users.append(after.id)
-            console.log(f'[green]DMed {after.name}#{after.discriminator}.[/green]')
-        except:
-            console.log(f'[red]Couldn\'t DM {after.name}#{after.discriminator}.[/red]')
-
-@client.event
-async def on_message(message):
-    if message.author.id in users:
-        console.log(f'Already DMed {message.author.name}#{message.author.discriminator}.')
-    else:
-        try:
-            await message.author.send(messagesend)
-            users.append(message.author.id)
-            console.log(f'[green]DMed {message.author.name}#{message.author.discriminator}.[/green]')
-        except:
-            console.log(f'[red]Couldn\'t DM {message.author.name}#{message.author.discriminator}.[/red]')
-
-@client.event
-async def on_raw_reaction_add(payload):
-    member = payload.member
-    if member.id in users:
-        console.log(f'Already DMed {member.name}#{member.discriminator}.')
-    else:
-        try:
-            await member.send(messagesend)
-            users.append(member.id)
-            console.log(f'[green]DMed {member.name}#{member.discriminator}.[/green]')
-        except:
-            console.log(f'[red]Couldn\'t DM {member.name}#{member.discriminator}.[/red]')
-
-client.run(token, bot=False)
+bot = discum.Client(token=input('ur token: '), log=False)
+memberz = []
+guildz = input("Please input guild ID: ")
+channel = input("Please input a channel ID in that guild: ")
+messag = input("Please input your message: ")
+timez = input("How long between DMs: ")
+@bot.gateway.command
+def memberTest(resp):
+    if resp.event.ready_supplemental:
+        bot.gateway.fetchMembers(guildz, channel) 
+    if bot.gateway.finishedMemberFetching(guildz):
+        bot.gateway.removeCommand(memberTest)
+        bot.gateway.close()
+bot.gateway.run()
+for memberID in bot.gateway.session.guild(guildz).members:
+    print(memberID)
+    memberz.append(memberID)
+for x in memberz:
+    try:
+        rand = random.randint(0,20)
+        if rand == 20:
+            console.log(f'[red]Sleeping for 45 seconds to prevent rate-limiting.[/red]')
+            time.sleep(45)
+            console.log(f'[green]Done sleeping![/green]')
+        time.sleep(int(timez))
+        newDM = bot.createDM([f"{x}"]).json()["id"]
+        bot.sendMessage(newDM, f"{messag}")
+        console.log(f'[green]DMed {x}.[/green]')
+    except Exception as E:
+        print(E)
+        console.log(f'[red]Couldn\'t DM {x}.[/red]')
