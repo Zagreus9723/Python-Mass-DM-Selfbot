@@ -16,7 +16,6 @@ def memberTest(resp):
 bot.gateway.run()
 print("Starting add members.")
 for memberID in bot.gateway.session.guild(guildz).members:
-    print(memberID)
     memberz.append(memberID)
 print("Starting to DM.")
 for x in memberz:
