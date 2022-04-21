@@ -1,4 +1,4 @@
-import discum, random, time, json, os.path
+import discum, random, time, json, os.path, random
 from rich import console, print
 
 data = None
@@ -14,14 +14,18 @@ if data is not None and "guildid" in data.keys():
     guildz = data["guildid"]
 else:
     guildz = input("Please input guild ID: ")
-if data is not None and "channelid" in data.keys():
-    channel = data["channelid"]
+if data is not None and "channelids" in data.keys():
+    channelz = data["channelids"]
+elif data is not None and "channelid" in data.keys():
+    channelz = [data["channelid"]]
 else:
-    channel = input("Please input a channel ID in that guild: ")
-if data is not None and "message" in data.keys():
-    messag = data["message"]
+    channelz = [input("Please input a channel ID in that guild: ")]
+if data is not None and "messages" in data.keys():
+    messagz = [data["messages"]]
+elif data is not None and "message" in data.keys():
+    messagz = [data["message"]]
 else:
-    messag = input("Please input your message: ")
+    messagz = [input("Please input your message: ")]
 if data is not None and "time" in data.keys():
     timez = data["time"]
 else:
@@ -35,7 +39,8 @@ else:
 @bot.gateway.command
 def memberTest(resp):
     if resp.event.ready_supplemental:
-        bot.gateway.fetchMembers(guildz, channel)
+        for channel in channelz:
+            bot.gateway.fetchMembers(guildz, channel)
     if bot.gateway.finishedMemberFetching(guildz):
         bot.gateway.removeCommand(memberTest)
         bot.gateway.close()
@@ -64,7 +69,7 @@ for x in memberz:
         print(f"Preparing to DM {x}.")
         time.sleep(int(timez))
         newDM = bot.createDM([f"{x}"]).json()["id"]
-        bot.sendMessage(newDM, f"{messag} DM bot by https://github.com/Apophis52/Python-Mass-DM-Selfbot/")
+        bot.sendMessage(newDM, f"{random.choice(messagz)} DM bot by https://github.com/Apophis52/Python-Mass-DM-Selfbot/")
         print(f'DMed {x}.')
     except Exception as E:
         print(E)
