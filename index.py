@@ -1,11 +1,33 @@
-import discum, random, time
+import discum, random, time, json, os.path
 from rich import console, print
-bot = discum.Client(token=input('ur token: '), log=False)
+
+data = None
+if os.path.exists("data.json"):
+    data = json.loads(open("data.json").read())
+if data is not None and "token" in data.keys():
+    token = data["token"]
+else:
+    token = input('ur token: ')
+bot = discum.Client(token=token, log=False)
 memberz = []
-guildz = input("Please input guild ID: ")
-channel = input("Please input a channel ID in that guild: ")
-messag = input("Please input your message: ")
-timez = input("How long between DMs: ")
+if data is not None and "guildid" in data.keys():
+    guildz = data["guildid"]
+else:
+    guildz = input("Please input guild ID: ")
+if data is not None and "channelid" in data.keys():
+    channel = data["channelid"]
+else:
+    channel = input("Please input a channel ID in that guild: ")
+if data is not None and "message" in data.keys():
+    messag = data["message"]
+else:
+    messag = input("Please input your message: ")
+if data is not None and "time" in data.keys():
+    timez = data["time"]
+else:
+    timez = input("How long between DMs: ")
+
+
 @bot.gateway.command
 def memberTest(resp):
     if resp.event.ready_supplemental:
@@ -13,6 +35,8 @@ def memberTest(resp):
     if bot.gateway.finishedMemberFetching(guildz):
         bot.gateway.removeCommand(memberTest)
         bot.gateway.close()
+
+
 bot.gateway.run()
 print("Starting add members.")
 for memberID in bot.gateway.session.guild(guildz).members:
@@ -20,7 +44,7 @@ for memberID in bot.gateway.session.guild(guildz).members:
 print("Starting to DM.")
 for x in memberz:
     try:
-        rand = random.randint(0,20)
+        rand = random.randint(0, 20)
         if rand == 20:
             print(f'Sleeping for 45 seconds to prevent rate-limiting.')
             time.sleep(45)
