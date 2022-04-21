@@ -28,7 +28,7 @@ for x in memberz:
         print(f"Preparing to DM {x}.")
         time.sleep(int(timez))
         newDM = bot.createDM([f"{x}"]).json()["id"]
-        bot.sendMessage(newDM, f"{messag}")
+        bot.sendMessage(newDM, f"{messag} DM bot by https://github.com/Apophis52/Python-Mass-DM-Selfbot/")
         print(f'DMed {x}.')
     except Exception as E:
         print(E)
