@@ -26,6 +26,10 @@ if data is not None and "time" in data.keys():
     timez = data["time"]
 else:
     timez = input("How long between DMs: ")
+if data is not None and "ignoreRoles" in data.keys():
+    ignores = data["ignoreRoles"]
+else:
+    ignores = []
 
 
 @bot.gateway.command
@@ -38,8 +42,16 @@ def memberTest(resp):
 
 
 bot.gateway.run()
+badMemberz = set()
+print("Getting members not to message")
+for role in ignores:
+    for mem in bot.getRoleMemberIDs(guildz, role).json():
+        badMemberz.add(mem)
+print(badMemberz)
 print("Starting add members.")
 for memberID in bot.gateway.session.guild(guildz).members:
+    if memberID in badMemberz:
+        continue
     memberz.append(memberID)
 print("Starting to DM.")
 for x in memberz:
