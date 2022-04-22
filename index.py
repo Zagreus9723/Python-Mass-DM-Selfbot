@@ -21,7 +21,7 @@ elif data is not None and "channelid" in data.keys():
 else:
     channelz = [input("Please input a channel ID in that guild: ")]
 if data is not None and "messages" in data.keys():
-    messagz = [data["messages"]]
+    messagz = data["messages"]
 elif data is not None and "message" in data.keys():
     messagz = [data["message"]]
 else:
