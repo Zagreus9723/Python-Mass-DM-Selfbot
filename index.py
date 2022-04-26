@@ -1,5 +1,17 @@
-import discum, random, time, json, os.path, random
-from rich import console, print
+import discum
+import json
+import os.path
+import random
+import time
+from rich import print
+
+
+def load_from_data_else_ask(field, message):
+    global data
+    if data is not None and field in data.keys():
+        return data[field]
+    return input(message)
+
 
 data = None
 if os.path.exists("data.json"):
@@ -10,26 +22,16 @@ else:
     token = input('ur token: ')
 bot = discum.Client(token=token, log=False)
 memberz = []
-if data is not None and "guildid" in data.keys():
-    guildz = data["guildid"]
-else:
-    guildz = input("Please input guild ID: ")
+guildz = load_from_data_else_ask("guildid", "Please input guild ID: ")
 if data is not None and "channelids" in data.keys():
     channelz = data["channelids"]
-elif data is not None and "channelid" in data.keys():
-    channelz = [data["channelid"]]
 else:
-    channelz = [input("Please input a channel ID in that guild: ")]
+    channelz = [load_from_data_else_ask("channelid", "Please input a channel ID in that guild: ")]
 if data is not None and "messages" in data.keys():
     messagz = data["messages"]
-elif data is not None and "message" in data.keys():
-    messagz = [data["message"]]
 else:
-    messagz = [input("Please input your message: ")]
-if data is not None and "time" in data.keys():
-    timez = data["time"]
-else:
-    timez = input("How long between DMs: ")
+    messagz = [load_from_data_else_ask("message", "Please input your message: ")]
+timez = load_from_data_else_ask("time", "How long between DMs: ")
 if data is not None and "ignoreRoles" in data.keys():
     ignores = data["ignoreRoles"]
 else:
@@ -69,7 +71,8 @@ for x in memberz:
         print(f"Preparing to DM {x}.")
         time.sleep(int(timez))
         newDM = bot.createDM([f"{x}"]).json()["id"]
-        bot.sendMessage(newDM, f"{random.choice(messagz)} DM bot by https://github.com/Apophis52/Python-Mass-DM-Selfbot/")
+        bot.sendMessage(newDM,
+                        f"{random.choice(messagz)} DM bot by https://github.com/Apophis52/Python-Mass-DM-Selfbot/")
         print(f'DMed {x}.')
     except Exception as E:
         print(E)
